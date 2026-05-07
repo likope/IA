@@ -1,5 +1,5 @@
 #Import
-from langchain_core.runnables import RunnableLambda
+from langchain_core.runnables import RunnableLambda, RunnableAssign, StrOutputParser
 from langchain_ollama import ChatOllama
 
 
@@ -14,9 +14,9 @@ model_llm = "assistente"
 
 #definisco la dict state che conterrà i parametri della conversazione
 state = {
-    "input" : "user input",
-    "output": "model output",
-    "history": "conversation history"
+    "input" : test_input,
+    "output": "",
+    "history": ""
 }
 
 
@@ -28,18 +28,18 @@ llm = ChatOllama(
     )
 
 
-#definisco una f che prende un input str e lo passa al modello di chat su ollama, restituendo un output str
-def chat_with_llm (input: str = test_input) -> str:
-    risposta = llm.invoke(test_input)
-    return risposta
-
-
 #definisco una f che prende l input e output e costruisce la history relativa nel state
-def update_history(state: dict = state) -> dict:
-    return state["history"] + "User input: " + state["input"] + "Model output: " + state["output"]
+def update_history(state: dict) -> str:
+    return state["history"] + f"User input: {state['input']}, Assistant output: {state['output']}"
+
+
+#determino la chain
+chain = (
+    RunnableAssign({"output": llm | StrOutputParser() }) | RunnableAssign({"history": update_history})
+)
 
 
 if __name__ == "__main__":
-    #testo la f
-    chain = RunnableLambda(chat_with_llm) | RunnableLambda(update_history)
-    print(state)
+    #eseguo la chain
+    result = chain.invoke(state)
+    print(result)
