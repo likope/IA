@@ -22,7 +22,7 @@ llm = ChatOllama(
     base_url = "http://localhost:11434"
 )
 
-chain = prompt|llm|StrOutputParser
+chain = prompt|llm|StrOutputParser()
 
 
 if __name__ == "__main__":
