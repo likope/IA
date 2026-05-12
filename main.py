@@ -1,6 +1,7 @@
 from langchain_core.prompts import PromptTemplate
 from langchain_ollama import ChatOllama
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnableAssign
 
 
 dict = {
@@ -22,7 +23,7 @@ llm = ChatOllama(
     base_url = "http://localhost:11434"
 )
 
-chain = prompt|llm|StrOutputParser()
+chain = (prompt|llm|StrOutputParser()) | RunnableAssign({"output": ""})
 
 
 if __name__ == "__main__":
