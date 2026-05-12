@@ -4,8 +4,10 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableAssign
 
 
+user_input=""
+
 dict = {
-    "input": "chi sei?",
+    "input": user_input,
     "output": "",
     "history": "",
     "first_response": "",
@@ -23,9 +25,13 @@ llm = ChatOllama(
     base_url = "http://localhost:11434"
 )
 
+
 chain = RunnableAssign({"output": prompt|llm|StrOutputParser()})
 
 
 if __name__ == "__main__":
-    response = chain.invoke(dict)
-    print(response)
+    i=0
+    while True:
+        user_input = input("Inserisci il prompt, digita 'exit' per terminare\n")
+        response = chain.invoke(dict)
+        print(response)
